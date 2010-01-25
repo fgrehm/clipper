@@ -4,8 +4,8 @@ require Pathname(__FILE__).dirname.parent + "helper"
 class SyntaxTest < Test::Unit::TestCase
 
   def setup
-    uri = Clipper::Uri.new("abstract://localhost/example")
-    repository = Clipper::registrations["default"] = Clipper::Repositories::Abstract.new("abstract", uri)
+    Clipper::open("default", "abstract://localhost/example")
+    repository = Clipper::registrations["default"] 
     @syntax = Clipper::Syntax::Sql.new(repository)
     
     orm = Clipper::Session::Helper.orm('default')
