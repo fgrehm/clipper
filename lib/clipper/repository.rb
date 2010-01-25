@@ -63,6 +63,21 @@ module Clipper
       raise NotImplementedError.new("#{self.class}#close must be implemented.")
     end
 
+    ##
+    # Quotes the table or column name according the connection's declared
+    # quote string.
+    #
+    def quote_identifier(identifier)
+      quote_string = self.quote_string
+      identifier.gsub(/([^\.]+)/, "#{quote_string}\\1#{quote_string}")
+    end
+
+    protected
+    
+    def quote_string
+      '"'
+    end
+
     private
 
     def self.create_default_map

@@ -268,15 +268,6 @@ module Clipper
         @schema ||= Clipper::Repositories::Schema.new(self)
       end
 
-      ##
-      # Quotes the table or column name according the connection's declared
-      # quote string.
-      #
-      def quote_identifier(identifier)
-        quote_string = self.quote_string
-        identifier.gsub(/([^\.]+)/, "#{quote_string}\\1#{quote_string}")
-      end
-
       protected
 
       ##
