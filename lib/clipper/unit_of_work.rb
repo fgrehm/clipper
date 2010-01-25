@@ -22,11 +22,9 @@ module Clipper
         return
       end
 
-      @session.mappings[object.class].associations.each do |association|
-        if association.is_a?(Clipper::Mapping::ManyToOne)
-          if (associated_object = association.get(object))
-            @session.enlist(associated_object)
-          end
+      @session.mappings[object.class].each_many_to_one_association do |association|
+        if (associated_object = association.get(object))
+          @session.enlist(associated_object)
         end
       end
 
@@ -39,14 +37,11 @@ module Clipper
         end
       end
 
-      @session.mappings[object.class].associations.each do |association|
-        if association.is_a?(Clipper::Mapping::ManyToMany)
-
-          association.get(object).each_to_enlist do |associated_object, link|
-            @session.enlist(associated_object)
-            @session.enlist(link)
-          end.finished_enlisting!
-        end
+      @session.mappings[object.class].each_many_to_many_association do |association|
+        association.get(object).each_to_enlist do |associated_object, link|
+          @session.enlist(associated_object)
+          @session.enlist(link)
+        end.finished_enlisting!
       end
 
       execute if @flush_immediately
@@ -87,9 +82,7 @@ module Clipper
         when :create, :update then
           collection = work_order[1].is_a?(Collection) ? work_order[1] : Collection.new(@session.mappings[work_order[1].class], [work_order[1]].flatten)
 
-          @session.mappings[work_order[1].class].associations.each do |association|
-            next unless association.is_a?(Clipper::Mapping::ManyToOne)
-
+          @session.mappings[work_order[1].class].each_many_to_one_association do |association|
             collection.each do |instance|
               if (associated_object = association.get(instance))
                 association.set_key(instance, associated_object)
