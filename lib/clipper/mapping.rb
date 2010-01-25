@@ -107,6 +107,10 @@ module Clipper
       field(field_name, *repository_types)
     end
 
+    def each_one_to_many_association
+      @associations.each { |association| yield association if association.is_a?(OneToMany) }
+    end
+
     private
 
     def add_association(association)

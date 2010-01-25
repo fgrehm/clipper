@@ -33,11 +33,9 @@ module Clipper
       # Add CREATE ZooKeeper
       @work_orders << new_work_order
 
-      @session.mappings[object.class].associations.each do |association|
-        if association.is_a?(Clipper::Mapping::OneToMany)
-          association.get(object).each_to_enlist do |associated_object|
-            @session.enlist(associated_object)
-          end
+      @session.mappings[object.class].each_one_to_many_association do |association|
+        association.get(object).each_to_enlist do |associated_object|
+          @session.enlist(associated_object)
         end
       end
 
@@ -101,8 +99,7 @@ module Clipper
 
           @session.repository.send(work_order[0], collection, @session)
 
-          @session.mappings[work_order[1].class].associations.each do |association|
-            next unless association.is_a?(Clipper::Mapping::OneToMany)
+          @session.mappings[work_order[1].class].each_one_to_many_association do |association|
             # Since we just created the instance, we need to ensure that all associated items know about
             # the new parent key
             collection.each do |instance|
