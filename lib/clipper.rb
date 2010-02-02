@@ -1,6 +1,9 @@
 require "pathname"
 require "set"
 require "rubygems"
+require "arel"
+
+require 'active_support/core_ext/module/delegation'
 
 require Pathname(__FILE__).dirname + "vendor" + "log4j-1.2.15.jar"
 
@@ -58,6 +61,7 @@ require Pathname(__FILE__).dirname + "clipper" + "repositories"
 require Pathname(__FILE__).dirname + "clipper" + "repositories" + "schema"
 require Pathname(__FILE__).dirname + "clipper" + "repositories" + "abstract"
 
+require Pathname(__FILE__).dirname + "clipper" + "query" + "arel" + "entity"
 require Pathname(__FILE__).dirname + "clipper" + "query" + "query"
 require Pathname(__FILE__).dirname + "clipper" + "query" + "expression"
 require Pathname(__FILE__).dirname + "clipper" + "query" + "condition"
