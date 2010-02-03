@@ -21,6 +21,7 @@ module Clipper
       end
 
       class Entity < ::Arel::Relation
+        attr_reader :table, :engine
         delegate :to_sql, :attributes, :where, :to => :table
 
         def initialize(mapping)
@@ -32,14 +33,6 @@ module Clipper
           # Remove ActiveRecord dependency
           columns = mapping.fields.collect { |f| Column.new(f.name, f.type) }
           @table.instance_variable_set('@columns', columns)
-        end
-
-        def engine
-          @engine
-        end
-
-        def table
-          @table
         end
       end
     end

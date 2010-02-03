@@ -66,11 +66,12 @@ module Clipper
     def get(target, *keys)
       mapping = repository.mappings[target]
 
-      conditions = Query::AndExpression.new(*mapping.keys.zip(keys).map { |condition| Query::Condition.eq(*condition) })
+      relation = Clipper::Query::Arel::Entity.new(mapping)
+      mapping.keys.zip(keys).each do |condition|
+        relation = relation.where(relation[condition[0].name.to_sym].eq(condition[1]))
+      end
 
-      query = Query.new(mapping, nil, conditions)
-
-      map_results([repository.select(query, self).first]).first
+      map_results([repository.select_relation(relation, mapping).first]).first
     end
 
     def all(target)

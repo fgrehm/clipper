@@ -31,6 +31,36 @@ module Clipper
         @syntax ||= Clipper::Syntax::Sql.new(self)
       end
 
+      def select_relation(relation, mapping)
+        collection = Clipper::Collection.new(mapping, [])
+        statement = relation.to_sql
+        mapping_fields = mapping.fields
+
+        with_connection do |connection|
+          logger.debug(statement)
+
+          stmt = connection.createStatement
+          results = stmt.executeQuery(statement)
+
+          results_metadata = results.getMetaData
+
+          while results.next
+            resource = mapping.target.allocate
+            values = (1..results_metadata.getColumnCount).zip(mapping_fields).map do |i, field|
+              get_value_from_result_set(results, i, field.type)
+            end
+
+            mapping_fields.zip(values) { |field, value| field.accessor.set(resource, value) }
+            collection << resource
+          end
+
+          results.close
+          stmt.close
+        end
+
+        collection
+      end
+
       def select(query, session)
         mapping_fields = query.mapping.fields
 
