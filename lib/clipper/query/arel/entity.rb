@@ -9,6 +9,17 @@ module Clipper
         end
       end
 
+      class Helper
+        def initialize(relation)
+          @relation = relation
+        end
+
+        undef id
+        def method_missing(name, *args)
+          @relation[name.to_sym]
+        end
+      end
+
       class Entity < ::Arel::Relation
         delegate :to_sql, :attributes, :where, :to => :table
 

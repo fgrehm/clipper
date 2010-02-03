@@ -28,6 +28,13 @@ class Integration::EntityTest < Test::Unit::TestCase
     assert_instance_of ::Arel::Attribute, @relation[:id]
   end
 
+  def test_helper
+    helper = Clipper::Query::Arel::Helper.new(@relation)
+
+    assert_instance_of ::Arel::Attribute, helper.id
+    assert_equal @relation[:id], helper.id
+  end
+
   def test_where
     expected = "SELECT     \"zoos\".\"id\", \"zoos\".\"name\" FROM       \"zoos\""
     assert_equal expected, @relation.to_sql
