@@ -10,6 +10,7 @@ class Integration::EntityTest < Test::Unit::TestCase
     Clipper::open("default", "jdbc:hsqldb:mem:test")
     load Pathname(__FILE__).dirname.parent + "sample_models_mapping.rb"
 
+    Arel::Table.engine = Clipper::Query::Arel::Engine.new(orm.repository)
     @relation = Clipper::Query::Arel::Entity.new(orm.repository.mappings[Zoo])
   end
 
@@ -27,11 +28,20 @@ class Integration::EntityTest < Test::Unit::TestCase
     assert_instance_of ::Arel::Attribute, @relation[:id]
   end
 
-  def test_respond_to_sql
-    assert @relation.respond_to?(:to_sql)
-  end
+  def test_where
+    expected = "SELECT     \"zoos\".\"id\", \"zoos\".\"name\" FROM       \"zoos\""
+    assert_equal expected, @relation.to_sql
 
-  def test_respond_to_where
-    assert @relation.respond_to?(:where)
+    expected = "SELECT     \"zoos\".\"id\", \"zoos\".\"name\" FROM       \"zoos\" WHERE     \"zoos\".\"name\" = 'zoo name'"
+    query = @relation.where(@relation[:name].eq('zoo name'))
+    assert_equal expected, query.to_sql
+
+    expected = "SELECT     \"zoos\".\"id\", \"zoos\".\"name\" FROM       \"zoos\" WHERE     \"zoos\".\"id\" = 1"
+    query = @relation.where(@relation[:id].eq(1))
+    assert_equal expected, query.to_sql
+
+    expected = "SELECT     \"zoos\".\"id\", \"zoos\".\"name\" FROM       \"zoos\" WHERE     \"zoos\".\"id\" = \"zoos\".\"name\""
+    query = @relation.where(@relation[:id].eq(@relation[:name]))
+    assert_equal expected, query.to_sql
   end
 end

@@ -25,11 +25,11 @@ module Clipper
         end
 
         def quote_table_name(name)
-          @repository.quote_identifier(name)
+          @repository.quote_identifier(name.to_s)
         end
 
         def quote_column_name(name)
-          @repository.quote_identifier(name)
+          @repository.quote_identifier(name.to_s)
         end
 
         def quote_string(s)

@@ -1,18 +1,30 @@
 module Clipper
   class Query
     module Arel
+      class Column
+        attr_reader :name, :type
+
+        def initialize(name, type)
+          @name, @type = name.to_s, type
+        end
+      end
+
       class Entity < ::Arel::Relation
-        delegate :to_sql, :attributes, :to => :table
+        delegate :to_sql, :attributes, :where, :to => :table
 
         def initialize(mapping)
           raise ArgumentError.new unless mapping.is_a?(Clipper::Mapping)
 
-          fields = mapping.fields.collect { |f| ::Arel::Attribute.new(self, f.name) }
           @table = Table(mapping.name)
+          @engine = ::Arel::Table.engine
 
-          #   Remove ActiveRecord dependency by avoiding the need to check database
-          # table for columns
-          @table.instance_variable_set('@attributes', fields)
+          # Remove ActiveRecord dependency
+          columns = mapping.fields.collect { |f| Column.new(f.name, f.type) }
+          @table.instance_variable_set('@columns', columns)
+        end
+
+        def engine
+          @engine
         end
 
         def table
