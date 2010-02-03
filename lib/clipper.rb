@@ -61,6 +61,7 @@ require Pathname(__FILE__).dirname + "clipper" + "repositories"
 require Pathname(__FILE__).dirname + "clipper" + "repositories" + "schema"
 require Pathname(__FILE__).dirname + "clipper" + "repositories" + "abstract"
 
+require Pathname(__FILE__).dirname + "clipper" + "query" + "arel" + "engine"
 require Pathname(__FILE__).dirname + "clipper" + "query" + "arel" + "entity"
 require Pathname(__FILE__).dirname + "clipper" + "query" + "query"
 require Pathname(__FILE__).dirname + "clipper" + "query" + "expression"
