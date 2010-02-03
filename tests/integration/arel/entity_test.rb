@@ -44,4 +44,15 @@ class Integration::EntityTest < Test::Unit::TestCase
     query = @relation.where(@relation[:id].eq(@relation[:name]))
     assert_equal expected, query.to_sql
   end
+
+  def test_reusing_relation
+    expected = "SELECT     \"zoos\".\"id\", \"zoos\".\"name\" FROM       \"zoos\" WHERE     \"zoos\".\"name\" = 'zoo name' AND \"zoos\".\"id\" = 1 LIMIT     5 OFFSET    10"
+
+    relation = @relation.where(@relation[:name].eq('zoo name'))
+    relation = relation.where(relation[:id].eq(1))
+    relation = relation.skip(10)
+    relation = relation.take(5)
+
+    assert_equal expected, relation.to_sql
+  end
 end
